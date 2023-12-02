@@ -36,11 +36,41 @@ router.get('/restore/:film_id',(req, res) => {
 //     })
 // })
 
-router.get('/restore/film', (req,res) => {
-    const query = 'select film join film_category where f.id = film_category.film_id Join category where c.id = film_category.category_id'
-    pool.query(query, (err, result) => {
-        if(err) throw err 
+// router.get('/restore/category/:category_id', (req,res) => {
+//     const {category_id} = req.params
+//     const query = `select * from category where category_id = ${category_id}`
+    
+//     pool.query(query, [category_id], (err, result) => {
+//         if(err) throw err
+//         res.send(result.rows)
+//     })
+// })
+
+router.get('/category/:category_id',(req, res) => {
+    const {category_id} = req.params
+    const query = `select * from category where category_id = ${category_id}`
+
+    pool.query (query, (err, result) => {
+        if(err) throw err
         res.send(result.rows)
     })
 })
+
+///get film berdasar category
+
+router.get ('/film/:category_id', (req, res) => {
+    
+    const {category_id} = req.params
+    console.log(category_id)
+
+    const query = `SELECT f.title FROM film f JOIN film_category ON f.film_id = film_category.film_id JOIN category ON film_category.category_id = category.category_id WHERE category.category_id  = ${category_id};`
+
+    pool.query(query, (err, result) => {
+        if(err) throw err
+        res.send(result.rows)
+    })
+    
+})
+
+
 module.exports = router
